@@ -76,8 +76,10 @@ var registrars []registrar
 // NewRootCmd assembles the full command tree. main.go calls
 // NewRootCmd().ExecuteContext(ctx) with a signal.NotifyContext so Ctrl-C cancels
 // in-flight work.
-func NewRootCmd() *cobra.Command {
-	d := newDeps()
+func NewRootCmd() *cobra.Command { return newRootCmd(newDeps()) }
+
+// newRootCmd is the deps-injected assembly used by tests (fake store, temp config).
+func newRootCmd(d *deps) *cobra.Command {
 	root := &cobra.Command{
 		Use:   "cwctl",
 		Short: "A fast, scriptable CLI for the full Chatwoot API",

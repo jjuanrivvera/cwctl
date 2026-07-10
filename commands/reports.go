@@ -283,7 +283,7 @@ func reportsEventsCmd(d *deps) *cobra.Command {
 	cmd.Flags().StringVar(&inboxID, "inbox-id", "", "only this inbox")
 	cmd.Flags().StringVar(&userID, "user-id", "", "only this agent")
 	cmd.Flags().StringVar(&name, "name", "", "event name: conversation_creation | first_response | conversation_resolved | …")
-	cmd.RunE = runE(d, false, []string{"id", "name", "value", "user_id", "created_at"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
+	cmd.RunE = runListE(d, false, []string{"id", "name", "value", "user_id", "created_at"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
 		q, err := rng()
 		if err != nil {
 			return nil, err

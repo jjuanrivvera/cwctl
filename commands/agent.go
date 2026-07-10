@@ -77,9 +77,7 @@ func pathsFromSegments(segs [][]string) (string, []string) {
 	}
 	canonical := combos[0]
 	var aliases []string
-	for _, p := range combos[1:] {
-		aliases = append(aliases, p)
-	}
+	aliases = append(aliases, combos[1:]...)
 	return canonical, aliases
 }
 
@@ -223,7 +221,7 @@ func writeClaudeCodeFiles(cmd *cobra.Command, cls classification) error {
 		if _, err := os.Stat(path); err == nil {
 			return fmt.Errorf("%s already exists — remove it first or merge manually", path)
 		}
-		if err := os.MkdirAll(dirOf(path), 0o755); err != nil {
+		if err := os.MkdirAll(dirOf(path), 0o750); err != nil {
 			return err
 		}
 		mode := os.FileMode(0o644)

@@ -552,3 +552,25 @@ func runE(d *deps, noAuth bool, cols []string, fn func(*cobra.Command, *api.Clie
 		return d.render(cmd, out, cols)
 	}
 }
+
+// runListE is runE for custom verbs whose response is a LIST in one of Chatwoot's
+// envelopes: it normalizes {data:{meta,payload}} / {payload:[…]} / bare arrays to rows so
+// tables and `-o id` work, instead of rendering the wrapper object.
+func runListE(d *deps, noAuth bool, cols []string, fn func(*cobra.Command, *api.Client, []string) (json.RawMessage, error)) func(*cobra.Command, []string) error {
+	return runE(d, noAuth, cols, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		out, err := fn(cmd, c, args)
+		if err != nil || out == nil {
+			return nil, err
+		}
+		items, err := api.NormalizeList(out)
+		if err != nil {
+			// Not list-shaped after all (some deployments return a bare object) — render as-is.
+			return out, nil //nolint:nilerr // fallback by design
+		}
+		normalized, err := json.Marshal(items)
+		if err != nil {
+			return nil, err
+		}
+		return normalized, nil
+	})
+}

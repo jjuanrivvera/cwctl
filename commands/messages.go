@@ -42,7 +42,7 @@ func messagesListCmd(d *deps) *cobra.Command {
 		Example: `  cwctl messages list 42
   cwctl messages list 42 --before 105023 -o json`,
 		Args: cobra.ExactArgs(1),
-		RunE: runE(d, false, []string{"id", "content", "message_type", "created_at"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, []string{"id", "content", "message_type", "created_at"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			query := url.Values{}
 			if before != "" {
 				query.Set("before", before)

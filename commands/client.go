@@ -164,7 +164,7 @@ func clientConvListCmd(d *deps) *cobra.Command {
 		Short:   "List a contact's conversations in a public inbox",
 		Example: "  cwctl client conversations list Fbd1h… c7f3…",
 		Args:    cobra.ExactArgs(2),
-		RunE: runE(d, true, []string{"id", "inbox_id", "status"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, true, []string{"id", "inbox_id", "status"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Send(cmd.Context(), http.MethodGet, publicContactPath(args[0], args[1])+"/conversations", nil, nil, &out)
 			return out, err
@@ -264,7 +264,7 @@ func clientMsgListCmd(d *deps) *cobra.Command {
 		Short:   "List messages in a public conversation",
 		Example: "  cwctl client messages list Fbd1h… c7f3… 42",
 		Args:    cobra.ExactArgs(3),
-		RunE: runE(d, true, []string{"id", "content", "message_type"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, true, []string{"id", "content", "message_type"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Send(cmd.Context(), http.MethodGet, publicConvPath(args[0], args[1], args[2])+"/messages", nil, nil, &out)
 			return out, err

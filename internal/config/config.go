@@ -21,11 +21,11 @@ const DefaultProfile = "default"
 // bundles base_url + account_id + (keyring-held) tokens, so switching profile switches
 // everything at once (DECISIONS.md #4).
 type Profile struct {
-	BaseURL   string  `yaml:"base_url,omitempty"`
-	AccountID string  `yaml:"account_id,omitempty"`
-	UserID    string  `yaml:"user_id,omitempty"` // from GET /api/v1/profile at auth login
-	Email     string  `yaml:"email,omitempty"`   // identity display for auth status
-	Rps       float64 `yaml:"rps,omitempty"`     // per-profile rate limit override
+	BaseURL   string  `yaml:"base_url,omitempty" json:"base_url,omitempty"`
+	AccountID string  `yaml:"account_id,omitempty" json:"account_id,omitempty"`
+	UserID    string  `yaml:"user_id,omitempty" json:"user_id,omitempty"` // from GET /api/v1/profile at auth login
+	Email     string  `yaml:"email,omitempty" json:"email,omitempty"`     // identity display for auth status
+	Rps       float64 `yaml:"rps,omitempty" json:"rps,omitempty"`         // per-profile rate limit override
 }
 
 // Config is the on-disk configuration.

@@ -58,9 +58,9 @@ func contactSearchCmd(d *deps) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "search",
 		Short:   "Search contacts by name, identifier, email, or phone",
-		Example: `  cwctl contacts search --q ana\n  cwctl contacts search --q "+57300" -o json`,
+		Example: "  cwctl contacts search --q ana\n  cwctl contacts search --q +57300 -o json",
 		Args:    cobra.NoArgs,
-		RunE: runE(d, false, []string{"id", "name", "email", "phone_number"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, []string{"id", "name", "email", "phone_number"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			query := url.Values{"q": {q}}
 			if d.gf.page > 0 {
@@ -87,7 +87,7 @@ func contactFilterCmd(d *deps) *cobra.Command {
 		Example: `  cwctl contacts filter --payload '[{"attribute_key":"country_code","filter_operator":"equal_to","values":["CO"]}]'
   cwctl contacts filter --payload @filter.json`,
 		Args: cobra.NoArgs,
-		RunE: runE(d, false, []string{"id", "name", "email", "phone_number"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, []string{"id", "name", "email", "phone_number"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
 			raw, err := readDataArg(cmd, payload)
 			if err != nil {
 				return nil, err
@@ -139,7 +139,7 @@ func contactConversationsCmd(d *deps) *cobra.Command {
 		Short:   "List a contact's conversations",
 		Example: "  cwctl contacts conversations 12",
 		Args:    cobra.ExactArgs(1),
-		RunE: runE(d, false, []string{"id", "inbox_id", "status"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, []string{"id", "inbox_id", "status"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Contacts().Action(cmd.Context(), http.MethodGet, url.PathEscape(args[0])+"/conversations", nil, nil, &out)
 			return out, err
@@ -153,7 +153,7 @@ func contactContactableInboxesCmd(d *deps) *cobra.Command {
 		Short:   "List the inboxes a contact can be reached through",
 		Example: "  cwctl contacts contactable-inboxes 12",
 		Args:    cobra.ExactArgs(1),
-		RunE: runE(d, false, nil, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, nil, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Contacts().Action(cmd.Context(), http.MethodGet, url.PathEscape(args[0])+"/contactable_inboxes", nil, nil, &out)
 			return out, err
@@ -191,7 +191,7 @@ func contactLabelsCmd(d *deps) *cobra.Command {
 		Short:   "List a contact's labels",
 		Example: "  cwctl contacts labels 12",
 		Args:    cobra.ExactArgs(1),
-		RunE: runE(d, false, nil, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, nil, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Contacts().Action(cmd.Context(), http.MethodGet, url.PathEscape(args[0])+"/labels", nil, nil, &out)
 			return out, err

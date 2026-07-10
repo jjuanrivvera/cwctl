@@ -36,7 +36,7 @@ func integrationsAppsCmd(d *deps) *cobra.Command {
 		Short:   "List available integration apps and their status",
 		Example: "  cwctl integrations apps -o json",
 		Args:    cobra.NoArgs,
-		RunE: runE(d, false, []string{"id", "name", "enabled"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, []string{"id", "name", "enabled"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Send(cmd.Context(), http.MethodGet, c.AccountPath("integrations/apps"), nil, nil, &out)
 			return out, err

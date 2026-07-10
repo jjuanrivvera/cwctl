@@ -37,7 +37,7 @@ func teamMembersCmd(d *deps) *cobra.Command {
 		Short:   "List the agents in a team",
 		Example: "  cwctl teams members 3",
 		Args:    cobra.ExactArgs(1),
-		RunE: runE(d, false, []string{"id", "name", "email", "role"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, []string{"id", "name", "email", "role"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Teams().Action(cmd.Context(), http.MethodGet, url.PathEscape(args[0])+"/team_members", nil, nil, &out)
 			return out, err

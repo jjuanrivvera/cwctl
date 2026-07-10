@@ -91,7 +91,7 @@ func convFilterCmd(d *deps) *cobra.Command {
 		Example: `  cwctl conversations filter --payload '[{"attribute_key":"status","filter_operator":"equal_to","values":["pending"]}]'
   cwctl conversations filter --payload @filter.json`,
 		Args: cobra.NoArgs,
-		RunE: runE(d, false, []string{"id", "inbox_id", "status", "priority"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, []string{"id", "inbox_id", "status", "priority"}, func(cmd *cobra.Command, c *api.Client, _ []string) (json.RawMessage, error) {
 			raw, err := readDataArg(cmd, payload)
 			if err != nil {
 				return nil, err
@@ -120,7 +120,7 @@ func convLabelsCmd(d *deps) *cobra.Command {
 		Short:   "List a conversation's labels",
 		Example: "  cwctl conversations labels 42",
 		Args:    cobra.ExactArgs(1),
-		RunE: runE(d, false, nil, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, nil, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Conversations().Action(cmd.Context(), http.MethodGet, url.PathEscape(args[0])+"/labels", nil, nil, &out)
 			return out, err
@@ -273,7 +273,7 @@ func convReportingEventsCmd(d *deps) *cobra.Command {
 		Short:   "List a conversation's reporting events (first response, resolved, …)",
 		Example: "  cwctl conversations reporting-events 42",
 		Args:    cobra.ExactArgs(1),
-		RunE: runE(d, false, []string{"id", "name", "value", "created_at"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, []string{"id", "name", "value", "created_at"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Conversations().Action(cmd.Context(), http.MethodGet, url.PathEscape(args[0])+"/reporting_events", nil, nil, &out)
 			return out, err

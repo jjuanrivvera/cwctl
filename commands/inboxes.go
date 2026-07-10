@@ -84,7 +84,7 @@ func inboxMembersCmd(d *deps) *cobra.Command {
 		Short:   "List the agents in an inbox",
 		Example: "  cwctl inboxes members 3",
 		Args:    cobra.ExactArgs(1),
-		RunE: runE(d, false, []string{"id", "name", "email", "role"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
+		RunE: runListE(d, false, []string{"id", "name", "email", "role"}, func(cmd *cobra.Command, c *api.Client, args []string) (json.RawMessage, error) {
 			var out json.RawMessage
 			err := c.Send(cmd.Context(), http.MethodGet, inboxMembersPath(c)+"/"+url.PathEscape(args[0]), nil, nil, &out)
 			return out, err

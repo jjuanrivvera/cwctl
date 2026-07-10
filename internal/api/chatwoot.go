@@ -8,6 +8,14 @@ import "encoding/json"
 // (DECISIONS.md #19). Typed structs are used only where cwctl itself consumes fields.
 type Rec = json.RawMessage
 
+// NormalizeList exposes the envelope normalization to irregular commands that fetch
+// list-shaped responses outside Resource.List (search, filter, members, nested listings),
+// so their tables and `-o id` see rows — not the {meta,payload} wrapper.
+func NormalizeList(data []byte) ([]Rec, error) {
+	items, _, err := decodeList[Rec](data)
+	return items, err
+}
+
 // --- application API (account-scoped unless noted) ---
 
 func (c *Client) AgentBots() *Resource[Rec] { return NewResource[Rec](c, c.AccountPath("agent_bots")) }
