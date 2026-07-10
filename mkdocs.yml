@@ -1,0 +1,36 @@
+site_name: cwctl
+site_description: A fast, scriptable CLI for the Chatwoot API
+site_url: https://jjuanrivvera.github.io/cwctl/
+repo_url: https://github.com/jjuanrivvera/cwctl
+repo_name: jjuanrivvera/cwctl
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: deep purple
+      toggle: { icon: material/brightness-7, name: Switch to dark mode }
+    - scheme: slate
+      primary: deep purple
+      toggle: { icon: material/brightness-4, name: Switch to light mode }
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - content.tabs.link
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Guides:
+      - Authentication & profiles: authentication.md
+      - Output & filtering: output.md
+      - AI agents: agents.md
+  - Command reference: commands/cwctl.md
