@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"sort"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -244,14 +243,4 @@ func normalizeColumns(cols []string) []string {
 		}
 	}
 	return out
-}
-
-// sortedKeys returns map keys in deterministic order (help text, doctor output).
-func sortedKeys[V any](m map[string]V) []string {
-	keys := make([]string, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	return keys
 }

@@ -3,9 +3,9 @@ package commands
 import "github.com/jjuanrivvera/cwctl/internal/api"
 
 func init() {
+	// No "agent" alias: it would shadow the `cwctl agent` (guard) meta command.
 	registerResource("", resourceSpec[api.Rec]{
 		Use:     "agents",
-		Aliases: []string{"agent"},
 		Short:   "Manage the account's agents",
 		New:     func(c *api.Client) *api.Resource[api.Rec] { return c.Agents() },
 		Columns: []string{"id", "name", "email", "role", "availability_status"},

@@ -42,7 +42,8 @@ func init() {
 		Extra: []extraCommand{
 			{Kind: kindRead, Build: contactSearchCmd},
 			{Kind: kindRead, Build: contactFilterCmd},
-			{Kind: kindWrite, Build: contactMergeCmd},
+			// merge deletes the mergee contact — irreversible, so destructive (§3b #4).
+			{Kind: kindDestructive, Build: contactMergeCmd},
 			{Kind: kindRead, Build: contactConversationsCmd},
 			{Kind: kindRead, Build: contactContactableInboxesCmd},
 			{Kind: kindWrite, Build: contactCreateContactInboxCmd},

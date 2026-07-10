@@ -34,7 +34,7 @@
     },
     {
       "name": "agents",
-      "aliases": ["agent"],
+      "aliases": [],
       "verbs": ["list", "create", "update", "delete"],
       "methods": {
         "list": "GET /api/v1/accounts/{account_id}/agents",
