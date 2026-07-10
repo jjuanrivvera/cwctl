@@ -9,7 +9,7 @@ if [[ -z "$staged_go" ]]; then
 fi
 
 # gofmt only the staged .go files
-fmt_bad=$(echo "$staged_go" | grep -E '\.go$' | xargs -r gofmt -l)
+fmt_bad=$(echo "$staged_go" | { grep -E '\.go$' || true; } | xargs -r gofmt -l)
 if [[ -n "$fmt_bad" ]]; then
   echo "✗ gofmt needed:" >&2; echo "$fmt_bad" >&2
   echo "  run: gofmt -s -w ." >&2
