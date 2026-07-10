@@ -1,0 +1,22 @@
+# docs.yml — regenerate the command reference and publish the MkDocs site (GOAL.md §6).
+name: Docs
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', 'commands/**', 'mkdocs.yml']
+
+permissions:
+  contents: write   # gh-pages push
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version: stable }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.x' }
+      - run: pip install mkdocs-material
+      - run: make docs-gen
+      - run: mkdocs gh-deploy --force

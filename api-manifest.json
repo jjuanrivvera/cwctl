@@ -1,0 +1,393 @@
+{
+  "_comment": "Spec-derived manifest (cliwright GOAL.md §0/§11). The FULL Chatwoot API is enumerated from Chatwoot's own OpenAPI spec (see api_method_source) — the same spec that renders developers.chatwoot.com — not model recall. Every verb maps 1:1 to an enumerated operation ('METHOD path'). scripts/spec-check.sh enforces surface⊆manifest (consistency); scripts/spec-completeness.sh enforces manifest≈full-API (completeness). Resources are grouped application → platform (platform app token) → client (public, unauthenticated), alphabetical within group (DECISIONS.md). The one flat `methods` entry is a swagger duplicate covered by an existing verb (DECISIONS.md #2).",
+  "binary": "cwctl",
+  "base_url": "per-profile instance root (e.g. https://app.chatwoot.com); API paths /api/v1, /api/v2 (reports), /platform/api/v1, /public/api/v1",
+  "auth": "api-key-header `api_access_token`: user token (application API), platform app token (platform API); public/client API is unauthenticated",
+  "pagination": "page= query param (server-fixed 25/page on paginated lists); many lists unpaginated; conversations/contacts expose meta counts",
+  "profile_flag": "profile",
+  "profile_noun": "profile",
+  "api_method_total": 144,
+  "api_method_source": "https://github.com/chatwoot/chatwoot/blob/develop/swagger/swagger.json @ 33dea837168b (2026-06-02) — 144 operations over 89 paths (jq '[.paths|to_entries[]|.value|keys[]|select(.!=\"parameters\")]|length'); same spec that renders developers.chatwoot.com (chatwoot/docs docs.json points at swagger/tag_groups/*)",
+  "resources": [
+    {
+      "name": "account",
+      "aliases": ["acct"],
+      "verbs": ["get", "update"],
+      "methods": {
+        "get": "GET /api/v1/accounts/{account_id}",
+        "update": "PATCH /api/v1/accounts/{account_id}"
+      },
+      "key_fields": ["id", "name", "locale", "domain"]
+    },
+    {
+      "name": "agent-bots",
+      "aliases": ["bots"],
+      "verbs": ["list", "create", "get", "update", "delete"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/agent_bots",
+        "create": "POST /api/v1/accounts/{account_id}/agent_bots",
+        "get": "GET /api/v1/accounts/{account_id}/agent_bots/{id}",
+        "update": "PATCH /api/v1/accounts/{account_id}/agent_bots/{id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/agent_bots/{id}"
+      },
+      "key_fields": ["id", "name", "description"]
+    },
+    {
+      "name": "agents",
+      "aliases": ["agent"],
+      "verbs": ["list", "create", "update", "delete"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/agents",
+        "create": "POST /api/v1/accounts/{account_id}/agents",
+        "update": "PATCH /api/v1/accounts/{account_id}/agents/{id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/agents/{id}"
+      },
+      "key_fields": ["id", "name", "email", "role", "availability_status"]
+    },
+    {
+      "name": "audit-logs",
+      "aliases": ["audit"],
+      "verbs": ["list"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/audit_logs"
+      },
+      "key_fields": ["id", "auditable_type", "action", "user_id", "created_at"]
+    },
+    {
+      "name": "automation-rules",
+      "aliases": ["automations"],
+      "verbs": ["list", "create", "get", "update", "delete"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/automation_rules",
+        "create": "POST /api/v1/accounts/{account_id}/automation_rules",
+        "get": "GET /api/v1/accounts/{account_id}/automation_rules/{id}",
+        "update": "PATCH /api/v1/accounts/{account_id}/automation_rules/{id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/automation_rules/{id}"
+      },
+      "key_fields": ["id", "name", "event_name", "active"]
+    },
+    {
+      "name": "canned-responses",
+      "aliases": ["canned"],
+      "verbs": ["list", "create", "update", "delete"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/canned_responses",
+        "create": "POST /api/v1/accounts/{account_id}/canned_responses",
+        "update": "PATCH /api/v1/accounts/{account_id}/canned_responses/{id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/canned_responses/{id}"
+      },
+      "key_fields": ["id", "short_code", "content"]
+    },
+    {
+      "name": "contacts",
+      "aliases": ["contact"],
+      "verbs": ["list", "create", "get", "update", "delete", "search", "filter", "merge", "conversations", "contactable-inboxes", "create-contact-inbox", "labels", "add-labels"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/contacts",
+        "create": "POST /api/v1/accounts/{account_id}/contacts",
+        "get": "GET /api/v1/accounts/{account_id}/contacts/{id}",
+        "update": "PUT /api/v1/accounts/{account_id}/contacts/{id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/contacts/{id}",
+        "search": "GET /api/v1/accounts/{account_id}/contacts/search",
+        "filter": "POST /api/v1/accounts/{account_id}/contacts/filter",
+        "merge": "POST /api/v1/accounts/{account_id}/actions/contact_merge",
+        "conversations": "GET /api/v1/accounts/{account_id}/contacts/{id}/conversations",
+        "contactable-inboxes": "GET /api/v1/accounts/{account_id}/contacts/{id}/contactable_inboxes",
+        "create-contact-inbox": "POST /api/v1/accounts/{account_id}/contacts/{id}/contact_inboxes",
+        "labels": "GET /api/v1/accounts/{account_id}/contacts/{id}/labels",
+        "add-labels": "POST /api/v1/accounts/{account_id}/contacts/{id}/labels"
+      },
+      "key_fields": ["id", "name", "email", "phone_number"]
+    },
+    {
+      "name": "conversations",
+      "aliases": ["conv", "convs"],
+      "verbs": ["list", "meta", "create", "get", "update", "filter", "labels", "add-labels", "assign", "toggle-status", "toggle-priority", "toggle-typing", "set-custom-attributes", "reporting-events"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/conversations",
+        "meta": "GET /api/v1/accounts/{account_id}/conversations/meta",
+        "create": "POST /api/v1/accounts/{account_id}/conversations",
+        "get": "GET /api/v1/accounts/{account_id}/conversations/{conversation_id}",
+        "update": "PATCH /api/v1/accounts/{account_id}/conversations/{conversation_id}",
+        "filter": "POST /api/v1/accounts/{account_id}/conversations/filter",
+        "labels": "GET /api/v1/accounts/{account_id}/conversations/{conversation_id}/labels",
+        "add-labels": "POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/labels",
+        "assign": "POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/assignments",
+        "toggle-status": "POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/toggle_status",
+        "toggle-priority": "POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/toggle_priority",
+        "toggle-typing": "POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/toggle_typing_status",
+        "set-custom-attributes": "POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/custom_attributes",
+        "reporting-events": "GET /api/v1/accounts/{account_id}/conversations/{conversation_id}/reporting_events"
+      },
+      "key_fields": ["id", "inbox_id", "status", "priority"]
+    },
+    {
+      "name": "csat",
+      "aliases": [],
+      "verbs": ["page"],
+      "methods": {
+        "page": "GET /survey/responses/{conversation_uuid}"
+      },
+      "key_fields": []
+    },
+    {
+      "name": "custom-attributes",
+      "aliases": ["attributes"],
+      "verbs": ["list", "create", "get", "update", "delete"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/custom_attribute_definitions",
+        "create": "POST /api/v1/accounts/{account_id}/custom_attribute_definitions",
+        "get": "GET /api/v1/accounts/{account_id}/custom_attribute_definitions/{id}",
+        "update": "PATCH /api/v1/accounts/{account_id}/custom_attribute_definitions/{id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/custom_attribute_definitions/{id}"
+      },
+      "key_fields": ["id", "attribute_display_name", "attribute_key", "attribute_model"]
+    },
+    {
+      "name": "custom-filters",
+      "aliases": ["filters"],
+      "verbs": ["list", "create", "get", "update", "delete"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/custom_filters",
+        "create": "POST /api/v1/accounts/{account_id}/custom_filters",
+        "get": "GET /api/v1/accounts/{account_id}/custom_filters/{custom_filter_id}",
+        "update": "PATCH /api/v1/accounts/{account_id}/custom_filters/{custom_filter_id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/custom_filters/{custom_filter_id}"
+      },
+      "key_fields": ["id", "name", "filter_type"]
+    },
+    {
+      "name": "inboxes",
+      "aliases": ["inbox"],
+      "verbs": ["list", "create", "get", "update", "agent-bot", "set-agent-bot", "members", "add-members", "update-members", "remove-members"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/inboxes",
+        "create": "POST /api/v1/accounts/{account_id}/inboxes",
+        "get": "GET /api/v1/accounts/{account_id}/inboxes/{id}",
+        "update": "PATCH /api/v1/accounts/{account_id}/inboxes/{id}",
+        "agent-bot": "GET /api/v1/accounts/{account_id}/inboxes/{id}/agent_bot",
+        "set-agent-bot": "POST /api/v1/accounts/{account_id}/inboxes/{id}/set_agent_bot",
+        "members": "GET /api/v1/accounts/{account_id}/inbox_members/{inbox_id}",
+        "add-members": "POST /api/v1/accounts/{account_id}/inbox_members",
+        "update-members": "PATCH /api/v1/accounts/{account_id}/inbox_members",
+        "remove-members": "DELETE /api/v1/accounts/{account_id}/inbox_members"
+      },
+      "key_fields": ["id", "name", "channel_type"]
+    },
+    {
+      "name": "integrations",
+      "aliases": [],
+      "verbs": ["apps", "create-hook", "update-hook", "delete-hook"],
+      "methods": {
+        "apps": "GET /api/v1/accounts/{account_id}/integrations/apps",
+        "create-hook": "POST /api/v1/accounts/{account_id}/integrations/hooks",
+        "update-hook": "PATCH /api/v1/accounts/{account_id}/integrations/hooks/{hook_id}",
+        "delete-hook": "DELETE /api/v1/accounts/{account_id}/integrations/hooks/{hook_id}"
+      },
+      "key_fields": ["id", "name", "enabled"]
+    },
+    {
+      "name": "labels",
+      "aliases": ["label"],
+      "verbs": ["list", "create", "get", "update", "delete"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/labels",
+        "create": "POST /api/v1/accounts/{account_id}/labels",
+        "get": "GET /api/v1/accounts/{account_id}/labels/{id}",
+        "update": "PATCH /api/v1/accounts/{account_id}/labels/{id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/labels/{id}"
+      },
+      "key_fields": ["id", "title", "color", "show_on_sidebar"]
+    },
+    {
+      "name": "messages",
+      "aliases": ["msg", "msgs"],
+      "verbs": ["list", "create", "delete"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/conversations/{conversation_id}/messages",
+        "create": "POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/messages",
+        "delete": "DELETE /api/v1/accounts/{account_id}/conversations/{conversation_id}/messages/{message_id}"
+      },
+      "key_fields": ["id", "content", "message_type", "created_at"]
+    },
+    {
+      "name": "portals",
+      "aliases": ["portal", "help-center"],
+      "verbs": ["list", "create", "update", "create-article", "create-category"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/portals",
+        "create": "POST /api/v1/accounts/{account_id}/portals",
+        "update": "PATCH /api/v1/accounts/{account_id}/portals/{id}",
+        "create-article": "POST /api/v1/accounts/{account_id}/portals/{id}/articles",
+        "create-category": "POST /api/v1/accounts/{account_id}/portals/{id}/categories"
+      },
+      "key_fields": ["id", "name", "slug", "archived"]
+    },
+    {
+      "name": "profile",
+      "aliases": ["me", "whoami"],
+      "verbs": ["get", "update"],
+      "methods": {
+        "get": "GET /api/v1/profile",
+        "update": "PUT /api/v1/profile"
+      },
+      "key_fields": ["id", "name", "email", "role"]
+    },
+    {
+      "name": "reports",
+      "aliases": ["report"],
+      "verbs": ["overview", "account-conversations", "agent-conversations", "summary", "first-response-time-distribution", "inbox-label-matrix", "outgoing-messages-count", "agent-summary", "channel-summary", "inbox-summary", "team-summary", "events"],
+      "methods": {
+        "overview": "GET /api/v2/accounts/{account_id}/reports",
+        "account-conversations": "GET /api/v2/accounts/{account_id}/reports/conversations",
+        "agent-conversations": "GET /api/v2/accounts/{account_id}/reports/conversations/ (swagger sibling of account-conversations; type=agent)",
+        "summary": "GET /api/v2/accounts/{account_id}/reports/summary",
+        "first-response-time-distribution": "GET /api/v2/accounts/{account_id}/reports/first_response_time_distribution",
+        "inbox-label-matrix": "GET /api/v2/accounts/{account_id}/reports/inbox_label_matrix",
+        "outgoing-messages-count": "GET /api/v2/accounts/{account_id}/reports/outgoing_messages_count",
+        "agent-summary": "GET /api/v2/accounts/{account_id}/summary_reports/agent",
+        "channel-summary": "GET /api/v2/accounts/{account_id}/summary_reports/channel",
+        "inbox-summary": "GET /api/v2/accounts/{account_id}/summary_reports/inbox",
+        "team-summary": "GET /api/v2/accounts/{account_id}/summary_reports/team",
+        "events": "GET /api/v1/accounts/{account_id}/reporting_events"
+      },
+      "key_fields": ["value", "timestamp"]
+    },
+    {
+      "name": "teams",
+      "aliases": ["team"],
+      "verbs": ["list", "create", "get", "update", "delete", "members", "add-members", "update-members", "remove-members"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/teams",
+        "create": "POST /api/v1/accounts/{account_id}/teams",
+        "get": "GET /api/v1/accounts/{account_id}/teams/{team_id}",
+        "update": "PATCH /api/v1/accounts/{account_id}/teams/{team_id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/teams/{team_id}",
+        "members": "GET /api/v1/accounts/{account_id}/teams/{team_id}/team_members",
+        "add-members": "POST /api/v1/accounts/{account_id}/teams/{team_id}/team_members",
+        "update-members": "PATCH /api/v1/accounts/{account_id}/teams/{team_id}/team_members",
+        "remove-members": "DELETE /api/v1/accounts/{account_id}/teams/{team_id}/team_members"
+      },
+      "key_fields": ["id", "name", "allow_auto_assign"]
+    },
+    {
+      "name": "webhooks",
+      "aliases": ["webhook"],
+      "verbs": ["list", "create", "update", "delete"],
+      "methods": {
+        "list": "GET /api/v1/accounts/{account_id}/webhooks",
+        "create": "POST /api/v1/accounts/{account_id}/webhooks",
+        "update": "PATCH /api/v1/accounts/{account_id}/webhooks/{webhook_id}",
+        "delete": "DELETE /api/v1/accounts/{account_id}/webhooks/{webhook_id}"
+      },
+      "key_fields": ["id", "url", "subscriptions"]
+    },
+    {
+      "name": "platform accounts",
+      "aliases": [],
+      "verbs": ["create", "get", "update", "delete"],
+      "methods": {
+        "create": "POST /platform/api/v1/accounts",
+        "get": "GET /platform/api/v1/accounts/{account_id}",
+        "update": "PATCH /platform/api/v1/accounts/{account_id}",
+        "delete": "DELETE /platform/api/v1/accounts/{account_id}"
+      },
+      "key_fields": ["id", "name", "locale"]
+    },
+    {
+      "name": "platform account-users",
+      "aliases": [],
+      "verbs": ["list", "create", "delete"],
+      "methods": {
+        "list": "GET /platform/api/v1/accounts/{account_id}/account_users",
+        "create": "POST /platform/api/v1/accounts/{account_id}/account_users",
+        "delete": "DELETE /platform/api/v1/accounts/{account_id}/account_users"
+      },
+      "key_fields": ["account_id", "user_id", "role"]
+    },
+    {
+      "name": "platform agent-bots",
+      "aliases": [],
+      "verbs": ["list", "create", "get", "update", "delete"],
+      "methods": {
+        "list": "GET /platform/api/v1/agent_bots",
+        "create": "POST /platform/api/v1/agent_bots",
+        "get": "GET /platform/api/v1/agent_bots/{id}",
+        "update": "PATCH /platform/api/v1/agent_bots/{id}",
+        "delete": "DELETE /platform/api/v1/agent_bots/{id}"
+      },
+      "key_fields": ["id", "name", "description"]
+    },
+    {
+      "name": "platform users",
+      "aliases": [],
+      "verbs": ["create", "get", "update", "delete", "sso-link"],
+      "methods": {
+        "create": "POST /platform/api/v1/users",
+        "get": "GET /platform/api/v1/users/{id}",
+        "update": "PATCH /platform/api/v1/users/{id}",
+        "delete": "DELETE /platform/api/v1/users/{id}",
+        "sso-link": "GET /platform/api/v1/users/{id}/login"
+      },
+      "key_fields": ["id", "name", "email"]
+    },
+    {
+      "name": "client contacts",
+      "aliases": [],
+      "verbs": ["create", "get", "update"],
+      "methods": {
+        "create": "POST /public/api/v1/inboxes/{inbox_identifier}/contacts",
+        "get": "GET /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}",
+        "update": "PATCH /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}"
+      },
+      "key_fields": ["id", "source_id", "name", "email"]
+    },
+    {
+      "name": "client conversations",
+      "aliases": [],
+      "verbs": ["list", "create", "get", "resolve", "toggle-typing", "update-last-seen"],
+      "methods": {
+        "list": "GET /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations",
+        "create": "POST /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations",
+        "get": "GET /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations/{conversation_id}",
+        "resolve": "POST /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations/{conversation_id}/toggle_status",
+        "toggle-typing": "POST /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations/{conversation_id}/toggle_typing",
+        "update-last-seen": "POST /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations/{conversation_id}/update_last_seen"
+      },
+      "key_fields": ["id", "inbox_id", "status"]
+    },
+    {
+      "name": "client inbox",
+      "aliases": [],
+      "verbs": ["get"],
+      "methods": {
+        "get": "GET /public/api/v1/inboxes/{inbox_identifier}"
+      },
+      "key_fields": ["identifier", "name"]
+    },
+    {
+      "name": "client messages",
+      "aliases": [],
+      "verbs": ["list", "create", "update"],
+      "methods": {
+        "list": "GET /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations/{conversation_id}/messages",
+        "create": "POST /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations/{conversation_id}/messages",
+        "update": "PATCH /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations/{conversation_id}/messages/{message_id}"
+      },
+      "key_fields": ["id", "content", "message_type"]
+    }
+  ],
+  "methods": [
+    "GET /accounts/{account_id}/conversations/{conversation_id}/messages — swagger duplicate of `messages list` (same Rails endpoint listed a second time without the /api/v1 prefix; opId getConversationMessages, tag 'Conversation'); covered by that verb"
+  ],
+  "special_ops": [
+    "conversations/contacts filter (POST payload query DSL)",
+    "contact merge (POST /actions/contact_merge)",
+    "toggle status/priority/typing",
+    "message create with attachments (multipart)",
+    "v2 reports (query-param driven, read-only)",
+    "platform user SSO link",
+    "public client API (unauthenticated, inbox/contact identifier scoped)",
+    "CSAT survey page (HTML endpoint)"
+  ]
+}

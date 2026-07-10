@@ -1,0 +1,52 @@
+version: "2"
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - misspell
+    - revive
+    - gosec
+    - bodyclose
+    - unconvert
+    - nilerr
+  settings:
+    errcheck:
+      # Writes to stdout/stderr (user-facing output) have no actionable error to handle.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
+    gosec:
+      # G404: non-crypto RNG is intentional for retry jitter (not a security boundary).
+      # G304: the CLI deliberately reads/writes user-named paths (config, --out, imports);
+      #       those reads are path-confined where they come from data (see internal/api).
+      # G101: false positive on help/UI strings that merely contain the word "token"
+      #       (e.g. the "token_storage" note in `config view`) — no secret is embedded.
+      excludes:
+        - G404
+        - G304
+        - G101
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+  exclusions:
+    rules:
+      # Test files exercise error paths and fixtures; relax the strictest lints there.
+      - path: _test\.go
+        linters:
+          - errcheck
+          - gosec
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/jjuanrivvera/cwctl

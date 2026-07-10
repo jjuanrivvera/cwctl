@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# pre-commit — fast local pre-flight (cliwright GOAL.md §5). CI remains the source of truth.
+# Skips the Go gate entirely when no Go files are staged so docs-only commits stay instant.
+set -euo pipefail
+
+staged_go=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.go$|^go\.(mod|sum)$' || true)
+if [[ -z "$staged_go" ]]; then
+  exit 0
+fi
+
+# gofmt only the staged .go files
+fmt_bad=$(echo "$staged_go" | grep -E '\.go$' | xargs -r gofmt -l)
+if [[ -n "$fmt_bad" ]]; then
+  echo "✗ gofmt needed:" >&2; echo "$fmt_bad" >&2
+  echo "  run: gofmt -s -w ." >&2
+  exit 1
+fi
+
+go vet ./... || exit 1
+if command -v golangci-lint >/dev/null 2>&1; then
+  golangci-lint run ./... || exit 1
+else
+  echo "… golangci-lint absent; skipping (CI will enforce)" >&2
+fi
+go test -short -race ./... || exit 1
+echo "✓ pre-commit checks passed"
