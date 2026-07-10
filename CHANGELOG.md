@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- Strip ANSI escape sequences and control characters from API-returned text (contact names,
+  labels, error bodies) before printing to the human table and error output — closes a
+  terminal-escape-injection vector where a crafted value could rewrite the terminal title or
+  move the cursor. Machine formats (json/yaml/csv) stay faithful. Ported from the official
+  Chatwoot CLI's `SanitizeText`, the one universally-valid code-quality edge it had.
+
 ### Added
 
 - **OpenAPI contract testing** (`commands/contract_test.go`): every request the CLI builds

@@ -48,7 +48,10 @@ func renderTable(v any, opts Options) error {
 	for ri, r := range rows {
 		display[ri] = make([]string, len(cols))
 		for ci, c := range cols {
-			cell, cut := truncCell(r[c], maxCellWidth)
+			// Strip terminal escapes from API-derived text and flatten to one line before
+			// it reaches the human table (json/yaml/csv stay faithful).
+			safe := cellOneLine(SanitizeTerminal(r[c]))
+			cell, cut := truncCell(safe, maxCellWidth)
 			truncated = truncated || cut
 			display[ri][ci] = cell
 			if w := utf8.RuneCountInString(cell); w > widths[ci] {

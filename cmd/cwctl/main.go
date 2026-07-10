@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/jjuanrivvera/cwctl/commands"
+	"github.com/jjuanrivvera/cwctl/internal/output"
 	"github.com/jjuanrivvera/cwctl/internal/version"
 )
 
@@ -27,7 +28,9 @@ func main() {
 	root.SetArgs(commands.ExpandAliases(os.Args[1:]))
 
 	if err := root.ExecuteContext(ctx); err != nil {
-		fmt.Fprintln(os.Stderr, "Error:", err)
+		// Error text can carry an API-returned body (a contact name, a validation message);
+		// strip terminal escapes before printing so a crafted value can't hijack the terminal.
+		fmt.Fprintln(os.Stderr, "Error:", output.SanitizeTerminal(err.Error()))
 		os.Exit(1)
 	}
 }
