@@ -7,22 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-11
+
+### Changed
+
+- **Renamed the tool from `cwctl` to `wootctl`.** `cwctl` collided with Chatwoot's own
+  official server-management CLI (ships with Chatwoot v2.7.0+, installs to
+  `/usr/local/bin/cwctl`). The binary, Go module path, config dir (`~/.wootctl-cli`), env
+  vars (`WOOTCTL_*`), keyring service, Homebrew cask/tap, Scoop bucket, and Docker image all
+  move to `wootctl`. Re-run `wootctl init` to re-store your token under the new name.
+
+### Added
+
+- **`chatwoot` drop-in step in `init`.** wootctl's command surface is a superset of the
+  official `chatwoot` CLI, so `init` offers to symlink `chatwoot` → `wootctl` — every official
+  command works here, plus multi-profile, keyring fallback, and backup/sync.
+- **One-line install script** (`install.sh`) for macOS/Linux, checksum-verified:
+  `curl -fsSL https://raw.githubusercontent.com/jjuanrivvera/wootctl/main/install.sh | sh`.
+- **OpenAPI contract testing** (`commands/contract_test.go`): every request the CLI builds
+  for the application API is validated against Chatwoot's own OpenAPI spec (method, path, and
+  request-body schema), vendored at `internal/api/testdata/application_swagger.json`. A
+  self-check test proves the harness can fail, so the gate can't silently green-light drift.
+
 ### Security
 
 - Strip ANSI escape sequences and control characters from API-returned text (contact names,
   labels, error bodies) before printing to the human table and error output — closes a
   terminal-escape-injection vector where a crafted value could rewrite the terminal title or
-  move the cursor. Machine formats (json/yaml/csv) stay faithful. Ported from the official
-  Chatwoot CLI's `SanitizeText`, the one universally-valid code-quality edge it had.
-
-### Added
-
-- **OpenAPI contract testing** (`commands/contract_test.go`): every request the CLI builds
-  for the application API is validated against Chatwoot's own OpenAPI spec (method, path, and
-  request-body schema), vendored at `internal/api/testdata/application_swagger.json`. A
-  self-check test proves the harness can fail (bad body + unknown path are flagged), so the
-  gate can't silently green-light drift. This is the wire-level check the official CLI has;
-  `spec-check` proves a command exists, this proves the bytes it sends match the schema.
+  move the cursor. Machine formats (json/yaml/csv) stay faithful.
 
 ## [0.2.0] - 2026-07-10
 
