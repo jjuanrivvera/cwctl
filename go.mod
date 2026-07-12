@@ -2,6 +2,8 @@ module github.com/jjuanrivvera/wootctl
 
 go 1.25.5
 
+toolchain go1.25.12
+
 require (
 	github.com/getkin/kin-openapi v0.139.0
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
